@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>ggOceanMaps_workshop</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Mikko Vihtakari &lt;mikko.vihtakari@hi.no&gt;     Researcher   Deep-water species and cartilaginous fish   Institute of Marine Research   Tromsø, Norway" />
+    <script src="ggOceanMaps_workshop_libs/header-attrs/header-attrs.js"></script>
+    <link href="ggOceanMaps_workshop_libs/remark-css/default.css" rel="stylesheet" />
+    <link href="ggOceanMaps_workshop_libs/remark-css/hygge.css" rel="stylesheet" />
+    <link href="ggOceanMaps_workshop_libs/remark-css/ninjutsu.css" rel="stylesheet" />
+    <link href="ggOceanMaps_workshop_libs/remark-css/kunoichi.css" rel="stylesheet" />
+    <script src="ggOceanMaps_workshop_libs/htmlwidgets/htmlwidgets.js"></script>
+    <script src="ggOceanMaps_workshop_libs/jquery/jquery.min.js"></script>
+    <link href="ggOceanMaps_workshop_libs/leaflet/leaflet.css" rel="stylesheet" />
+    <script src="ggOceanMaps_workshop_libs/leaflet/leaflet.js"></script>
+    <link href="ggOceanMaps_workshop_libs/leafletfix/leafletfix.css" rel="stylesheet" />
+    <script src="ggOceanMaps_workshop_libs/proj4/proj4.min.js"></script>
+    <script src="ggOceanMaps_workshop_libs/Proj4Leaflet/proj4leaflet.js"></script>
+    <link href="ggOceanMaps_workshop_libs/rstudio_leaflet/rstudio_leaflet.css" rel="stylesheet" />
+    <script src="ggOceanMaps_workshop_libs/leaflet-binding/leaflet.js"></script>
+    <link rel="stylesheet" href="css/apron.css" type="text/css" />
+    <link rel="stylesheet" href="css/custom.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# ggOceanMaps_workshop
+### Mikko Vihtakari &lt;<a href="mailto:mikko.vihtakari@hi.no" class="email">mikko.vihtakari@hi.no</a>&gt; <br> <br> Researcher <br> Deep-water species and cartilaginous fish <br> Institute of Marine Research <br> Tromsø, Norway
+### 20 January, 2021
+
+---
+
+layout: true
+class: split-three
+
+
+
+.row[.content[
+# ggOceanMaps - plot data on oceanographic maps using ggplot2
+
+Research data from anywhere around the globe can be plotted on bathymetric maps using ggplot2 syntax and extensions.
+.center[https://github.com/MikkoVihtakari/ggOceanMaps]
+]]
+
+.row[.content[
+  .split-three[
+  .column[.content[
+The package is available on [CRAN](https://cran.r-project.org/web/packages/ggOceanMaps)
+  &lt;br&gt; &lt;br&gt;
+  
+&lt;img src="https://www.r-project.org/logo/Rlogo.png" width="70%" style="display: block; margin: auto;" /&gt;
+
+  ]]
+  .column[.content[
+
+The [GitHub version](https://github.com/MikkoVihtakari/ggOceanMaps) is updated more frequently
+  
+&lt;img src="Figures/github_screenshot.png" width="2720" /&gt;
+
+  ]]
+  .column[.content[
+
+[Website](https://mikkovihtakari.github.io/ggOceanMaps/index.html) with documentation, [function reference](https://mikkovihtakari.github.io/ggOceanMaps/reference/index.html) and [user manual](https://mikkovihtakari.github.io/ggOceanMaps/articles/ggOceanMaps.html)
+  
+&lt;img src="Figures/website_screenshot.png" width="2984" /&gt;
+
+
+  ]]
+]
+]]
+
+???
+Add logo?
+
+---
+class: hide-col2 hide-col3
+
+---
+class: hide-col3
+count: false
+
+---
+count: false
+
+---
+layout: false
+class: split-33 compact
+
+.column[.content[
+
+![](ggOceanMaps_workshop_files/figure-html/unnamed-chunk-4-1.png)&lt;!-- --&gt;
+
+Note that ggOceanMaps .red[**does not work**] together with PlotSvalbard `if("package:PlotSvalbard" %in% search()) { detach("package:PlotSvalbard", unload=TRUE) }`
+
+
+]]
+
+.column[.content[
+
+# Setting up ggOceanMaps
+
+Required packages and installation
+
+
+```r
+packages &lt;- c("devtools", "ggOceanMapsData", "ggOceanMaps")
+
+## Install packages not yet installed
+inst_packages &lt;- packages %in% rownames(installed.packages())
+if (any(!inst_packages)) {
+  install.packages(packages[!inst_packages],
+          repos = c("https://cloud.r-project.org",
+                    "https://mikkovihtakari.github.io/drat")
+  )
+}
+
+## Load the packages to namespace
+invisible(lapply(packages, library, character.only = TRUE))
+
+basemap(60)
+```
+
+]]
+
+
+---
+class: inverse
+
+.pull-left[
+# Outline
+
+1. GIS in R briefly
+2. ggOceanMaps basics
+3. Advanced ggOceanMaps example
+4. Other mapping packages briefly
+
+Start a .red[new script in R studio] and keep it open
+]
+
+.pull-right[
+## Searching for help
+
+- [?](https://www.rdocumentation.org/packages/utils/versions/3.6.2/topics/Question)
+- [??](https://www.rdocumentation.org/packages/utils/versions/3.6.2/topics/help.search)
+- Google and StackExchange
+- [ggplot2 cheat sheet](https://rstudio.com/resources/cheatsheets/)
+- [GIS in R cheat sheet](https://www.maths.lancs.ac.uk/~rowlings/Teaching/UseR2012/cheatsheet.html)
+]
+
+---
+layout: false
+class: inverse, center, middle
+
+# A short introduction to GIS
+
+---
+class: inverse
+background-image: url(Figures/gg_idea.png)
+background-size: 100%
+
+---
+layout: true
+class: split-33 with-border
+
+.column.inverse[.content.vmiddle[
+  ## According to grammar of graphics variables are "mapped" to a coordinate system that can be defined freely
+]]
+
+.column[
+.split-two[
+.column[.content[
+  .split-two[
+  .row[.content[
+  
+.indigo[**1 Data**]
+  
+
+|  A|  B|C  |
+|--:|--:|:--|
+|  2|  3|a  |
+|  1|  2|a  |
+|  4|  5|b  |
+|  9|  2|b  |
+  ]]
+  .row[.content[
+  
+.indigo[**3 Aesthetics (appearance of points)**]
+  
+![](ggOceanMaps_workshop_files/figure-html/unnamed-chunk-7-1.png)&lt;!-- --&gt;
+  
+  ]]
+]]]
+
+.column[.content[
+  .split-two[
+  .row[.content[
+  
+.indigo[**2 Coordinate system**]
+  
+![](ggOceanMaps_workshop_files/figure-html/unnamed-chunk-8-1.png)&lt;!-- --&gt;
+  ]]
+  .row[.content.vmiddle[
+  
+.indigo[**4 Final plot**]
+  
+![](ggOceanMaps_workshop_files/figure-html/unnamed-chunk-9-1.png)&lt;!-- --&gt;
+
+  ]]
+]]]
+]]
+
+---
+class: hide-row1 hide-row2
+
+---
+class: hide-row2
+count: false
+
+---
+class: fade-row1
+count: false
+
+---
+layout: false
+
+## Maps can be considered as canvases for graphics but their coordinate systems stem from geographic positions of data defined by a **projection**
+
+.pull-left[
+
+.indigo[**A projected coordinate system &lt;br&gt; (polar stereographic = meters from the North Pole)**]
+  
+![](ggOceanMaps_workshop_files/figure-html/unnamed-chunk-10-1.png)&lt;!-- --&gt;
+
+]
+
+--
+
+.pull-right[
+
+.indigo[**Non-projected angular coordinate system &lt;br&gt; (decimal degrees = a position on the surface of a 3D sphere)**]
+
+![](ggOceanMaps_workshop_files/figure-html/unnamed-chunk-11-1.png)&lt;!-- --&gt;
+
+]
+
+---
+layout: true
+class:split-33
+
+.column.bg-main1[.content[
+## .center[Exercise]
+
+The decimal degree coordinates of Nordic capitals are Helsinki (60.2 `\(^\circ\)`N, 24.9 `\(^\circ\)`E), Stockholm (59.3 `\(^\circ\)`N, 18.1 `\(^\circ\)`E), Copenhagen (55.7 `\(^\circ\)`N, 12.6 `\(^\circ\)`E), Oslo (59.9 `\(^\circ\)`N, 10.8 `\(^\circ\)`E), and Reykjavik (64.1 `\(^\circ\)`N, 21.9 `\(^\circ\)`W). Plot the position of these capitals on a decimal degree grid using points in ggplot2 and map the color of the points to their name. 
+
+]]
+
+.column[.content[
+
+
+```r
+dt &lt;- data.frame(
+  name = c("Helsinki", "Stockholm", "Copenhagen", "Oslo", 
+           "Reykjavik"), 
+  lat = c(60.2, 59.3, 55.7, 59.9, 64.1), 
+  lon = c(24.9, 18.1, 12.6, 10.8, -21.9)
+)
+
+ggplot(dt, aes(x = lon, y = lat, color = name)) +
+  geom_point(size = 3) + theme_bw(base_size = 20)
+```
+
+&lt;img src="ggOceanMaps_workshop_files/figure-html/unnamed-chunk-12-1.png" style="display: block; margin: auto;" /&gt;
+
+
+]]
+
+---
+class: hide-col2
+
+---
+count: false
+
+---
+layout: false
+
+## Maps are 2D presentations of a surface of a sphere
+
+&lt;img src="Figures/Projection.png" width="777" style="display: block; margin: auto;" /&gt;
+
+.pull-left[
+Projections always reduce information &lt;br&gt;
+**Conformal**: preserves angles &lt;br&gt;
+**Isometric**: preserves distances
+]
+
+.pull-right[
+A projection **cannot be conformal and isometric at the same time** all over a map, but narrow maps can be close.
+]
+
+---
+class: col-3 compact inverse
+
+# Projections are approximations. Each has their use
+
+## Decimal degree
+
+- Not a projection if not plotted
+- Unit: **degrees** on a sphere
+- Preserves **angles**
+- Not suitable for maps where distances matter
+
+&lt;img src="Figures/Earth2.png" width="788" style="display: block; margin: auto;" /&gt;
+
+## Polar stereographic
+
+- Unit: **meters** from the North Pole
+- Preserves **angles**
+- Preserves distances 
+- Preserves distances along a plane at 71 `\(^\circ\)`N
+
+&lt;img src="Figures/polar2.png" width="1575" style="display: block; margin: auto;" /&gt;
+
+### Universal Transverse Mercator&lt;br&gt;(UTM)
+
+- Unit: **meters** along Earth’s surface
+- Preserves **distances** within a zone
+- Not suitable for wide maps
+&lt;br&gt;&lt;br&gt;
+
+
+&lt;img src="Figures/UTM_projection.png" width="1745" style="display: block; margin: auto;" /&gt;
+
+---
+layout: true
+class:split-33
+
+.column.bg-main1[.content[
+## .center[Exercise]
+
+Add coastlines as geom_path() to the capital plot you made in the previous exercise. The coastlines can be found from the [rnaturalearthdata](https://cran.r-project.org/web/packages/rnaturalearthdata/index.html) package (coastline50)
+
+]]
+
+.column[.content[
+
+
+
+
+```r
+install.packages("rnaturalearthdata")
+```
+
+
+```r
+ggplot() +
+  geom_path(data = rnaturalearthdata::coastline50, 
+    aes(x = long, y = lat, group = group)) +
+  geom_point(data = dt, 
+             aes(x = lon, y = lat, color = name), 
+             size = 3) + 
+  coord_map(xlim = range(dt$lon), ylim = range(dt$lat)) +
+  theme_bw(base_size = 20) + 
+  theme(plot.margin = unit(c(0,0,1,0), "cm"))
+```
+
+&lt;img src="ggOceanMaps_workshop_files/figure-html/unnamed-chunk-19-1.png" style="display: block; margin: auto;" /&gt;
+
+]]
+
+---
+class: hide-col2
+
+---
+count: false
+
+---
+layout: false
+class: compact
+
+# GIS in R on one slide
+
+.pull-left[
+Packages:
+
+
+```r
+library(sp)  # vector data
+library(raster) # raster data
+library(rgdal) # input/output, projections
+library(rgeos) # geometry operations
+library(sf) # simplifies GIS in R
+library(ggspatial) # shapefiles in ggplot2
+```
+
+Vector classes:
+
+```r
+?sp::SpatialPolygons
+?sp::SpatialPoints
+?sp::SpatialLines
+```
+]
+
+.pull-right[
+Coordinate reference system:
+
+
+```r
+sp::CRS("EPSG:4326") # Decimal degrees
+sf::st_crs(4326) # sf way to get the same
+sp::CRS("EPSG:3995") # Arctic stereographic
+sp::CRS("EPSG:3031") # Antarctic stereographic
+```
+
+Raster classes:
+
+```r
+?raster::raster
+?sp::SpatialGrid
+```
+
+]
+
+See more: https://www.maths.lancs.ac.uk/~rowlings/Teaching/UseR2012/cheatsheet.html
+
+---
+layout: false
+class: inverse, center, middle
+
+# ggOceanMaps - ggplot2 mapping made easy
+
+---
+class: col-3 compact tinycode
+
+# basemap(...) makes a map canvas. One of the following arguments are required:
+
+### .red[**limits**] (numeric) 
+sets the limits for a map. Can be:
+  - **single integer** in decimal degrees makes a polar map
+  - **numeric vector of length 4** makes a square map
+
+
+```r
+basemap(limits = 60)
+```
+
+&lt;img src="ggOceanMaps_workshop_files/figure-html/unnamed-chunk-24-1.png" style="display: block; margin: auto;" /&gt;
+
+### .red[**data**] (object name)
+lets a dataset to define the limits automatically
+  - data.frame or SpatialPolygons **object name**
+
+
+```r
+basemap(data = dt)
+```
+
+&lt;img src="ggOceanMaps_workshop_files/figure-html/unnamed-chunk-25-1.png" style="display: block; margin: auto;" /&gt;
+
+&lt;br&gt;
+
+### .red[**shapefiles**] (character) 
+plots shapefiles
+  - Name of a predefined or custom shapefile_list()
+  - Required if limits are supplied as projected coordinates
+
+
+```r
+basemap(limits = c(-2e6, 2e6, -2e6, 2e6),
+        shapefiles = "Arctic")
+```
+
+&lt;img src="ggOceanMaps_workshop_files/figure-html/unnamed-chunk-26-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+class: img-left-full compact
+
+# The .red[limits] argument
+
+- .indigo[**single integer**] in decimal degrees makes a polar map
+
+
+```r
+basemap(limits = 60)
+```
+
+![](ggOceanMaps_workshop_files/figure-html/unnamed-chunk-27-1.png)&lt;!-- --&gt;
+
+---
+class: img-left-full compact
+count: false
+
+# The .red[limits] argument
+
+.gray[
+- **single integer** in decimal degrees makes a polar map
+
+
+```r
+basemap(limits = 60)
+```
+]
+
+- .indigo[**numeric vector of length 4**] makes a square map
+
+
+```r
+basemap(limits = c(-20, 20, 55, 80))
+```
+
+![](ggOceanMaps_workshop_files/figure-html/unnamed-chunk-29-1.png)&lt;!-- --&gt;
+
+---
+class: img-left-full compact
+count: false
+
+# The .red[limits] argument
+
+.gray[
+- **single integer** in decimal degrees makes a polar map
+
+
+```r
+basemap(limits = 60)
+```
+
+- **numeric vector of length 4** in decimal degrees makes a square map
+
+
+```r
+basemap(limits = c(-20, 20, 55, 80))
+```
+]
+
+- .indigo[**numeric vector of length 4**] in projected coordinates requires specifying the .red[**shapefiles**] argument (or supplying .red[data])
+
+
+```r
+basemap(limits = c(-2e6, 2e6, -2e6, 2e6),
+        shapefiles = "Arctic")
+```
+
+![](ggOceanMaps_workshop_files/figure-html/unnamed-chunk-32-1.png)&lt;!-- --&gt;
+
+---
+class: img-caption
+
+![](Figures/limits_argument.png)
+
+The numeric limits vector is defined in the order 1) min/start longitude, 2) max/end longitude, 3) min latitude, 4) max latitude. The meaning depends on the projection.
+
+---
+
+# Exercise
+
+Use the ggOceanMaps website (https://mikkovihtakari.github.io/ggOceanMaps/) to solve following exercises.
+
+1) Plot the Antarctica using a Antarctic Polar Stereographic projection and a cut point at 60 `\(^\circ\)`S. 
+
+2) Add glaciers and bathymetry to the map
+
+.gray[
+3) Plot the capitals in previous examples using ggOceanMaps and the `data` argument to limit the map. Add bathymetry, remove bathymetry legend and change the latitude grid interval to 2 degrees.
+
+4) Make the same plot using the `qmap()` function.
+]
+
+---
+class: img-left-full
+
+![](ggOceanMaps_workshop_files/figure-html/unnamed-chunk-33-1.png)&lt;!-- --&gt;
+
+# Bathymetry and glaciers
+
+The logical `bathymetry` and `glaciers` arguments add these to `basemap()`
+
+The .red[bathymetry style] can be adjusted using the `bathy.style` argument or by using ggplot's `scale_*` functions. See the [User Manual](https://mikkovihtakari.github.io/ggOceanMaps/articles/ggOceanMaps.html#appearance-1).
+
+
+```r
+basemap(-60, bathymetry = TRUE, glaciers = TRUE)
+```
+
+The bathymetry .red[legend can be removed] using the `legends` argument.  
+
+---
+
+# Exercise
+
+Use the ggOceanMaps website (https://mikkovihtakari.github.io/ggOceanMaps/) to solve following exercises.
+
+.gray[
+1) Plot the Antarctica using a Antarctic Polar Stereographic projection and a cut point at 60 `\(^\circ\)`S. 
+
+2) Add glaciers and bathymetry to the map
+]
+
+3) Plot the capitals in previous examples using ggOceanMaps and the `data` argument to limit the map. Add bathymetry, remove bathymetry legend and change the latitude grid interval to 2 degrees.
+
+.gray[
+4) Make the same plot using the `qmap()` function.
+]
+
+---
+class: compact
+
+# The .red[data] argument
+
+.pull-left[
+
+- Supply a data.frame to automatically limit the map to the data
+
+
+```r
+basemap(data = dt)
+```
+
+![](ggOceanMaps_workshop_files/figure-html/unnamed-chunk-35-1.png)&lt;!-- --&gt;
+
+]
+
+--
+
+.pull-right[
+
+- The function uses `guess_coordinate_columns()` to guess the columns. This algorithm is not very advanced and simple names for the coordinate columns are suggested.
+
+
+```r
+head(dt, 2)
+```
+
+```
+##        name  lat  lon
+## 1  Helsinki 60.2 24.9
+## 2 Stockholm 59.3 18.1
+```
+
+```r
+guess_coordinate_columns(dt)
+```
+
+```
+##   lon   lat 
+## "lon" "lat"
+```
+
+]
+
+
+---
+class: compact
+
+.pull-left[
+
+# Adding data layers to basemaps
+
+Data can be added as ggplot layers, but:
+
+- The `data` argument .red[**must**] be specified
+- Data coordinates have to be in the same projection than the `basemap()`
+  - Use the [`transform_coord()`](https://mikkovihtakari.github.io/ggOceanMaps/reference/transform_coord.html) function OR
+  - The [ggspatial](https://CRAN.R-project.org/package=ggspatial) package
+
+
+```r
+basemap(data = dt, bathymetry = TRUE,
+        legends = FALSE, lat.interval = 2) +
+*geom_spatial_point(data = dt,
+                   aes(x = lon, y = lat, color = name)
+                   ) 
+# OR
+geom_point(`data = transform_coord(dt)`, 
+           aes(x = lon, y = lat, color = name)
+           )
+```
+
+]
+
+.pull-right[
+![](ggOceanMaps_workshop_files/figure-html/unnamed-chunk-38-1.png)&lt;!-- --&gt;
+]
+
+---
+class: compact
+
+# Rotating maps
+
+.pull-left[
+- The maps polar stereographic can be rotated to point north (or south) using the `rotate` argument
+- Note that rotation changes the underlying projection of the map, which has to be taken into account in data plotting
+- The rotation algorithm is still bugged and may produce unexpected results (as in the example)
+]
+
+.pull-right[
+
+```r
+basemap(limits = c(-21.9, 10.8, 55.7, 64.1), 
+        rotate = TRUE) +
+  geom_spatial_point(data = dt, 
+                     aes(x = lon, y = lat, 
+                         color = name)
+                     )
+```
+
+![](ggOceanMaps_workshop_files/figure-html/unnamed-chunk-39-1.png)&lt;!-- --&gt;
+]
+
+---
+
+# Exercise
+
+Use the ggOceanMaps website (https://mikkovihtakari.github.io/ggOceanMaps/) to solve following exercises.
+
+.gray[
+1) Plot the Antarctica using a Antarctic Polar Stereographic projection and a cut point at 60 `\(^\circ\)`S. 
+
+2) Add glaciers and bathymetry to the map
+
+3) Plot the capitals in previous examples using ggOceanMaps and the `data` argument to limit the map. Add bathymetry, remove bathymetry legend and change the latitude grid interval to 2 degrees.
+]
+
+4) Make the same plot using the `qmap()` function.
+
+---
+class: compact
+
+# The .red[qmap()] - a basemap shortcut
+
+.pull-left[
+
+- The `qmap()` function is meant as a quick way to check positions of data
+- Non-mapped variables need to be escaped using the `I()` similarly to `qplot()`
+
+
+```r
+qmap(dt, color = name, size = I(5))
+```
+
+![](ggOceanMaps_workshop_files/figure-html/unnamed-chunk-40-1.png)&lt;!-- --&gt;
+
+]
+
+--
+
+.pull-right[
+
+
+```r
+qmap(dt, color = I("red"), size = I(5))
+```
+
+![](ggOceanMaps_workshop_files/figure-html/unnamed-chunk-41-1.png)&lt;!-- --&gt;
+
+]
+
+---
+class: split-two
+
+.column[.content[
+# Detailed maps
+
+- Not included in ggOceanMapsData. Must be downloaded.
+- Setting the .red[**data path**] is advised. See [here](https://github.com/MikkoVihtakari/ggOceanMaps#data-path).
+- More shapefiles will be added and existing ones improved
+
+
+```r
+basemap(limits = c(10.9, 12.65, 78.83, 79.12), 
+        bathymetry = TRUE, shapefiles = "Svalbard",
+        legends = FALSE)
+```
+
+![](ggOceanMaps_workshop_files/figure-html/unnamed-chunk-42-1.png)&lt;!-- --&gt;
+]]
+
+.column[.content[
+
+```r
+basemap(shapefiles = "Svalbard", 
+        bathymetry = TRUE, legends = FALSE)
+```
+
+![](ggOceanMaps_workshop_files/figure-html/unnamed-chunk-43-1.png)&lt;!-- --&gt;
+]]
+
+---
+class: split-33 tinycode
+
+.column.inverse[.vmiddle.content[
+Usage:
+
+```r
+basemap(shapefiles = "Decimal")
+```
+
+![](ggOceanMaps_workshop_files/figure-html/unnamed-chunk-44-1.png)&lt;!-- --&gt;
+]]
+
+.column[.content[
+# Shapefiles and map types
+
+- All shapefiles included in ggOceanMaps:
+
+
+```r
+shapefile_list("all")
+```
+
+```
+##                     name                            land
+## 1    ArcticStereographic    ggOceanMapsData::arctic_land
+## 2 AntarcticStereographic ggOceanMapsData::antarctic_land
+## 3          DecimalDegree        ggOceanMapsData::dd_land
+## 4               Svalbard                   svalbard_land
+## 5             BarentsSea                 barentssea_land
+##                              glacier                            bathy   crs
+## 1    ggOceanMapsData::arctic_glacier    ggOceanMapsData::arctic_bathy  3995
+## 2 ggOceanMapsData::antarctic_glacier ggOceanMapsData::antarctic_bathy  3031
+## 3        ggOceanMapsData::dd_glacier        ggOceanMapsData::dd_bathy  4326
+## 4                   svalbard_glacier                   svalbard_bathy 32633
+## 5                 barentssea_glacier                 barentssea_bathy 32636
+##                                                                                    path
+## 1                                                                                  &lt;NA&gt;
+## 2                                                                                  &lt;NA&gt;
+## 3                                                                                  &lt;NA&gt;
+## 4   https://github.com/MikkoVihtakari/ggOceanMapsLargeData/raw/master/data/svalbard.rda
+## 5 https://github.com/MikkoVihtakari/ggOceanMapsLargeData/raw/master/data/barentssea.rda
+```
+
+.center[If a shapefile you need does not exist, .red[you can make it!]]
+
+]]
+
+---
+class: inverse, center, middle
+
+# Advanced ggOceanMaps
+
+---
+class: inverse compact tinycode
+
+# Projections and how to code them
+
+http://epsg.io/ is a nice resource
+
+.pull-left[
+## PROJ4 (old system)
+
+
+```r
+sp::CRS("+init=epsg:4326")
+```
+
+```
+## CRS arguments: +proj=longlat +datum=WGS84 +no_defs
+```
+
+]
+
+.pull-right[
+## PROJ6 (current rgdal system)
+
+
+```r
+sp::CRS("EPSG:4326")
+```
+
+```
+## CRS arguments: +proj=longlat +datum=WGS84 +no_defs
+```
+
+]
+
+Synonyms at the moment of writing, but not in all R and sp package versions. Note that the actual new information has been hidden behind comment():
+
+
+```r
+comment(sp::CRS("EPSG:4326"))
+```
+
+```
+## [1] "GEOGCRS[\"WGS 84 (with axis order normalized for visualization)\",\n    DATUM[\"World Geodetic System 1984\",\n        ELLIPSOID[\"WGS 84\",6378137,298.257223563,\n            LENGTHUNIT[\"metre\",1]],\n        ID[\"EPSG\",6326]],\n    PRIMEM[\"Greenwich\",0,\n        ANGLEUNIT[\"degree\",0.0174532925199433],\n        ID[\"EPSG\",8901]],\n    CS[ellipsoidal,2],\n        AXIS[\"geodetic longitude (Lon)\",east,\n            ORDER[1],\n            ANGLEUNIT[\"degree\",0.0174532925199433,\n                ID[\"EPSG\",9122]]],\n        AXIS[\"geodetic latitude (Lat)\",north,\n            ORDER[2],\n            ANGLEUNIT[\"degree\",0.0174532925199433,\n                ID[\"EPSG\",9122]]]]"
+```
+
+.center[See [here](https://gis.stackexchange.com/questions/374508/spproj4string-equivalent-in-the-proj6-framework) to understand the mess]
+
+
+---
+background-image: url(Figures/ggOceanMaps_projections.png)
+background-size: cover
+
+.pull-right[
+.content-box-grey[
+# Projections
+At the time of writing, `basemap()` uses the following projections:
+
+- .red[**3995** (Arctic Polar Stereographic)]
+- .green[**4326** (Decimal Degree)]
+- .blue[**3031** (Antarctic Polar Stereographic)]
+
+CRAN version still bugged for wide maps. I.e `limits[4] &gt;= 60 &amp; limits[3] &lt;= 30`.
+]
+]
+
+---
+class: inverse
+
+# Exercise
+
+Use the ggOceanMaps website (https://mikkovihtakari.github.io/ggOceanMaps/) and Google to solve following exercise:
+
+Make custom shapefiles for the Barents Sea with limits c(0, 53, 70, 82) out of the [ETOPO1 dataset (bathymetry)](https://www.ngdc.noaa.gov/mgg/global/relief/ETOPO1/data/ice_surface/grid_registered/netcdf/) and the [Natural Earth Data 10m land polygons](http://www.naturalearthdata.com/downloads/10m-physical-vectors/) using the [UTM zone 36N projection](http://epsg.io/32636). Add [ocean currents](https://github.com/MikkoVihtakari/Barents-Sea-currents) to the plot.
+
+---
+class: split-33 compact
+
+.column[.content[
+# Custom shapefiles
+
+Bathymetry data in ggOceanMaps are downloaded from [ETOPO 1 Arc-Minute Global Relief Model](https://www.ngdc.noaa.gov/mgg/global/relief/ETOPO1/data/ice_surface/grid_registered/netcdf/)
+
+These are grid (raster) data and need to be vectorized (made to shapefiles)
+
+Download the file and place the path to the `etopoPath` object
+
+If you want more detailed bathymetry, you can also use:
+ - [GEBCO 15-arcsecond model](https://www.gebco.net/data_and_products/gridded_bathymetry_data/gebco_2019/gebco_2019_info.html)
+ - [Geonorge.no](https://kartkatalog.geonorge.no/metadata/kartverket/dybdedata/2751aacf-5472-4850-a208-3532a51c529a)
+]]
+
+.column[.content[
+
+
+
+
+```r
+etopoPath &lt;- "Path/To/The/ETOPO/folder" 
+map.limits &lt;- c(0, 53, 70, 82)
+bound.limits &lt;- c(-25, 75, 65, 84)
+projection &lt;- "+init=epsg:32636"
+
+## Bathymetry
+
+rb &lt;- raster_bathymetry(bathy = 
+            paste(etopoPath, "ETOPO1_Ice_g_gmt4.grd", sep = "/"),
+          depths = 
+           c(50, 100, 200, 300, 400, 500, 750, 1000, 1500, 2000, 
+             3000, 4000, 5000, 6000, 10000), 
+           proj.out = projection, 
+           boundary = bound.limits
+)
+
+bs_bathy &lt;- vector_bathymetry(rb)
+```
+]]
+
+---
+class: split-33 compact
+
+.column[.content[
+# Land shapes
+
+- Land shapes have been downloaded from [Natural Earth Data](http://www.naturalearthdata.com/downloads/10m-physical-vectors/). 
+
+- Download "Land" and "Minor Islands" and unzip. Place into a folder.
+
+- These are already shapefiles and only require vectorizing.
+
+]]
+
+.column[.content[
+
+```r
+NEDPath &lt;- "Path/To/The/NED/folder" # Natural Earth Data location
+
+world &lt;- rgdal::readOGR(
+  paste(NEDPath, "ne_10m_land/ne_10m_land.shp", sep = "/")
+  )
+islands &lt;- rgdal::readOGR(
+  paste(NEDPath, "ne_10m_minor_islands/ne_10m_minor_islands.shp", 
+        sep = "/")
+  )
+world &lt;- rbind(world, islands)
+
+bs_land &lt;- clip_shapefile(world, bound.limits)
+bs_land &lt;- sp::spTransform(bs_land, CRSobj = sp::CRS(projection))
+rgeos::gIsValid(bs_land) # Has to return TRUE, if not use rgeos::gBuffer
+bs_land &lt;- rgeos::gBuffer(bs_land, byid = TRUE, width = 0)
+```
+]]
+
+---
+class: split-33 compact
+
+.column[.content[
+# Glacier shapes
+
+- Also the glacier shapes come from the [Natural Earth Data](http://www.naturalearthdata.com/downloads/10m-physical-vectors/). 
+
+- Download "Glaciated areas" and unzip. Place into the NED folder.
+
+]]
+
+.column[.content[
+
+```r
+glaciers &lt;- rgdal::readOGR(
+  paste(NEDPath,"ne_10m_glaciated_areas/ne_10m_glaciated_areas.shp", 
+        sep = "/")
+  )
+rgeos::gIsValid(glaciers) # Needs buffering?
+glaciers &lt;- rgeos::gBuffer(glaciers, byid = TRUE, width = 0)
+
+bs_glacier &lt;- clip_shapefile(glaciers, bound.limits)
+bs_glacier &lt;- sp::spTransform(bs_glacier, CRSobj = sp::CRS(projection))
+rgeos::gIsValid(bs_glacier)
+```
+]]
+
+---
+class: img-left-full
+
+![](ggOceanMaps_workshop_files/figure-html/unnamed-chunk-53-1.png)&lt;!-- --&gt;
+
+The components are now shapefiles and can be plotted using the sp package
+
+
+```r
+sp::plot(bs_bathy, col = "blue")
+sp::plot(bs_land, col = "red", add = TRUE)
+sp::plot(bs_glacier, col = "green", add = TRUE)
+```
+
+---
+class: img-left-full
+
+![](ggOceanMaps_workshop_files/figure-html/unnamed-chunk-55-1.png)&lt;!-- --&gt;
+
+Or using the ggOceanMaps
+
+
+```r
+basemap(shapefiles = list(land = bs_land, glacier = bs_glacier, bathy = bs_bathy), 
+        bathymetry = TRUE, glaciers = TRUE)
+```
+
+---
+class: img-left-full
+
+![](ggOceanMaps_workshop_files/figure-html/unnamed-chunk-57-1.png)&lt;!-- --&gt;
+
+The basemap asked for in the exercise
+
+
+```r
+p &lt;- basemap(limits = map.limits, 
+        shapefiles = 
+          list(land = bs_land, 
+               glacier = bs_glacier, 
+               bathy = bs_bathy),
+        bathymetry = TRUE, glaciers = TRUE, 
+        legends = FALSE)
+p
+```
+
+---
+class: compact
+
+Adding the currents
+
+
+```r
+path &lt;- paste0("https://github.com/MikkoVihtakari/Barents-Sea-currents/",
+              "raw/master/tabular/barents_currents.csv") # To make the url fit
+
+cur &lt;- read.csv(path)
+cur &lt;- transform_coord(cur, proj.out = projection, bind = TRUE)
+
+## Plot the limits (required for the xspline function)
+lims &lt;- auto_limits(expand.grid(data.frame(lon = bound.limits[1:2], lat = bound.limits[3:4])), proj.out = projection)$projBound
+sp::plot(lims)
+
+## Run xspline through the nodes
+
+tp &lt;- lapply(unique(cur$group), function(j) {
+  tmp &lt;- cur[cur$group == j,]
+  bla &lt;- xspline(x = tmp$lon.proj, y = tmp$lat.proj, shape = -0.6, draw = FALSE)
+  data.frame(long = bla$x, lat = bla$y, group = j, size = unique(tmp$size), type = unique(tmp$type))
+})
+```
+
+![](ggOceanMaps_workshop_files/figure-html/unnamed-chunk-59-1.png)&lt;!-- --&gt;
+
+```r
+cur &lt;- do.call(rbind, tp)
+```
+
+---
+class: img-left-full compact
+
+![](ggOceanMaps_workshop_files/figure-html/unnamed-chunk-60-1.png)&lt;!-- --&gt;
+
+Add the currents to the map
+
+
+```r
+p + geom_path(data = cur, 
+              aes(x = long, y = lat, group = group, color = type, size = size),
+              arrow = arrow(type = "open", angle = 15, ends = "last", length = unit(0.3, "lines"))
+              ) + 
+  scale_color_manual(name = "Current\ntype", 
+                     values = c("Arctic" = "blue", "Atlantic" = "red"), 
+                     guide = guide_legend(order = 2, override.aes = list(fill = NA))
+                     ) +
+  scale_size(name = "Current\nsize", range = c(LS(0.5), LS(3)), breaks = 1:5, 
+             labels = c("Intermittent", "Minor", "Medium", "Major", "Main"), 
+             guide = guide_legend(order = 3, override.aes = list(fill = NA))
+  )
+```
+
+---
+class: inverse, center, middle
+
+# Other mapping packages in R
+
+---
+# leaflet - make interactive maps
+
+
+```r
+library(leaflet)
+
+ leaflet(dt) %&gt;% 
+   addTiles(urlTemplate = paste0("https://server.arcgisonline.com/ArcGIS/",
+      "rest/services/Ocean_Basemap/MapServer/tile/{z}/{y}/{x}"),
+   attribution = paste0("Tiles &amp;copy; Esri &amp;mdash; Sources: ",
+   "GEBCO, NOAA, CHS, OSU, UNH, CSUMB, National Geographic, ",
+   "DeLorme, NAVTEQ, and Esri")) %&gt;% 
+    addCircleMarkers(lat = ~ lat, lng = ~ lon, 
+      weight = 1, radius = 5, 
+      popup = ~as.character(name), 
+      label = ~as.character(name), 
+      color = "red", fillOpacity = 0.5
+ )
+```
+---
+# leaflet - the resulting map
+
+<div id="htmlwidget-6693595e08f37bb4e3b1" style="width:100%;height:432px;" class="leaflet html-widget"></div>
+<script type="application/json" data-for="htmlwidget-6693595e08f37bb4e3b1">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["https://server.arcgisonline.com/ArcGIS/rest/services/Ocean_Basemap/MapServer/tile/{z}/{y}/{x}",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"Tiles &copy; Esri &mdash; Sources: GEBCO, NOAA, CHS, OSU, UNH, CSUMB, National Geographic, DeLorme, NAVTEQ, and Esri"}]},{"method":"addCircleMarkers","args":[[60.2,59.3,55.7,59.9,64.1],[24.9,18.1,12.6,10.8,-21.9],5,null,null,{"interactive":true,"className":"","stroke":true,"color":"red","weight":1,"opacity":0.5,"fill":true,"fillColor":"red","fillOpacity":0.5},null,null,["Helsinki","Stockholm","Copenhagen","Oslo","Reykjavik"],null,["Helsinki","Stockholm","Copenhagen","Oslo","Reykjavik"],{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]}],"limits":{"lat":[55.7,64.1],"lng":[-21.9,24.9]}},"evals":[],"jsHooks":[]}</script>
+---
+class: img-left-full
+
+![](https://journals.plos.org/plosone/article/figure/image?size=large&amp;id=10.1371/journal.pone.0073051.g001)
+
+# Other alternatives
+
+- [**marmap**](https://cran.r-project.org/web/packages/marmap/vignettes/marmap.pdf) downloads and plots bathymetric maps but uses raster data. Works for base and ggplot2 plotting.
+- [**oceanmap**](https://ro-allen.github.io/oceanmap.html) similar to ggOceanMaps but for base plotting.
+- [**oce**](https://cran.r-project.org/web/packages/oce/vignettes/map_projections.html) for oceanography but also makes maps (in base R). The maps do not have (very) high resolution by default. 
+- [**tmap**](https://cran.r-project.org/web/packages/tmap/vignettes/tmap-getstarted.html) great mapping for land.
+
+.center[And many, many, others. See [here](https://geocompr.robinlovelace.net/adv-map.html), [here](https://eriqande.github.io/rep-res-web/lectures/making-maps-with-R.html), or Google.]
+
+---
+# Still time?
+
+Trash the map with pies!
+
+---
+class: inverse
+
+# This presentation has been created using Rmarkdown, xaringan, remark.js and a whole lot of css files created by people online
+
+Sources and useful sites: 
+
+- https://bookdown.org/yihui/rmarkdown
+- https://bookdown.org/yihui/rmarkdown-cookbook/
+- https://story.xaprb.com/slides/adirondack || https://github.com/xaprb/story
+- https://emitanaka.org/ninja-theme/ || https://github.com/emitanaka/ninja-theme
+- https://ulyngs.github.io/rmarkdown-workshop-2019
+- https://github.com/gnab/remark
+
+.center[Thanks to the .blue[community] (.red[Yihui Xie], .red[Emi Tanaka], .red[Baron Schwartz], et al.) for coding Rmarkdown presentations!]
+
+---
+class: center, middle
+background-image: url(Figures/backcover.png)
+background-size: cover
+
+# And thanks to you!
+[.black[mikkovihtakari.github.io/ggOceanMaps/]](https://mikkovihtakari.github.io/ggOceanMaps/) &lt;br&gt;
+[.small[.black[The presentation source code]]](https://github.com/AeN-R-Workshop/4-ggOceanMaps)
+
+.my-footer[]
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"highlightSpans": true,
+"countIncrementalSlides": false,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

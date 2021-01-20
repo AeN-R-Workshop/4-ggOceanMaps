@@ -1,0 +1,91 @@
+:root {
+  --code-background: #f8f8f8;
+  --code-inline-color: black; 
+  --code-highlight: #FCFC86;
+}
+
+.title-slide {
+  width: 60%;
+  text-align: center!important;
+  height:100%;
+  display: table;
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: #545b5c;
+  background-image: url(../Figures/logos.png);
+  background-size:  50%, cover;
+  background-position: right bottom, 100%;
+  color: #F7F8FA;
+  padding: 0;
+  border-left-color: white;
+  border-left-style: solid;
+  border-left-width: 0.5em;
+}
+
+.remark-slide {
+  background-image: url(../Figures/title_background.png);
+  background-repeat: no-repeat;
+  background-size: 40%;
+}
+
+.title-slide h1 {padding-top: 15%; font-size: 3rem;}
+.title-slide h3 {padding-top: 4%; font-size: 2rem;}
+.title-slide h1, .title-slide h2, .title-slide h3  {
+  padding-left: 4%!important;
+  padding-right: 4%!important;
+}
+
+.title-slide .remark-slide-number {
+  display: none;
+}
+
+.my-logo-left {
+content: "";
+    position: absolute;
+    top: 15px;
+    left:   20px;
+    height: 40px;
+    width: 120px;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-image: url(https://www.r-project.org/logo/Rlogo.png);
+}
+
+.my-logo-right {
+content: "";
+    position: absolute;
+    top: 15px;
+    right:   8px;
+    height: 40px;
+    width: 120px;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-image: url(https://www.r-project.org/logo/Rlogo.png);
+}
+
+.my-footer {
+content: "dada";
+    position: absolute;
+    bottom: 15px;
+    right:   8px;
+    height: 40px;
+    width: 120px;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-image: url("../Figures/logo.png");
+}
+
+a, a > code {
+  color: #1b5fff; /*default: rgb(249, 38, 114); || sets color of links */
+  text-decoration: none; /* turns off background coloring of links */
+}
+
+code.r{
+  font-size: 18px;
+}
+
+.remark-slide-content.tinycode pre,
+.remark-slide-content.tinycode code {
+  font-size: 12px;
+}
