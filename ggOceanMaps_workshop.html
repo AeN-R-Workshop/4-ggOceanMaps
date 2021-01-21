@@ -1163,8 +1163,8 @@ library(leaflet)
 ---
 # leaflet - the resulting map
 
-<div id="htmlwidget-6693595e08f37bb4e3b1" style="width:100%;height:432px;" class="leaflet html-widget"></div>
-<script type="application/json" data-for="htmlwidget-6693595e08f37bb4e3b1">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["https://server.arcgisonline.com/ArcGIS/rest/services/Ocean_Basemap/MapServer/tile/{z}/{y}/{x}",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"Tiles &copy; Esri &mdash; Sources: GEBCO, NOAA, CHS, OSU, UNH, CSUMB, National Geographic, DeLorme, NAVTEQ, and Esri"}]},{"method":"addCircleMarkers","args":[[60.2,59.3,55.7,59.9,64.1],[24.9,18.1,12.6,10.8,-21.9],5,null,null,{"interactive":true,"className":"","stroke":true,"color":"red","weight":1,"opacity":0.5,"fill":true,"fillColor":"red","fillOpacity":0.5},null,null,["Helsinki","Stockholm","Copenhagen","Oslo","Reykjavik"],null,["Helsinki","Stockholm","Copenhagen","Oslo","Reykjavik"],{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]}],"limits":{"lat":[55.7,64.1],"lng":[-21.9,24.9]}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-d41d1d421b8542e13e8d" style="width:100%;height:432px;" class="leaflet html-widget"></div>
+<script type="application/json" data-for="htmlwidget-d41d1d421b8542e13e8d">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["https://server.arcgisonline.com/ArcGIS/rest/services/Ocean_Basemap/MapServer/tile/{z}/{y}/{x}",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"Tiles &copy; Esri &mdash; Sources: GEBCO, NOAA, CHS, OSU, UNH, CSUMB, National Geographic, DeLorme, NAVTEQ, and Esri"}]},{"method":"addCircleMarkers","args":[[60.2,59.3,55.7,59.9,64.1],[24.9,18.1,12.6,10.8,-21.9],5,null,null,{"interactive":true,"className":"","stroke":true,"color":"red","weight":1,"opacity":0.5,"fill":true,"fillColor":"red","fillOpacity":0.5},null,null,["Helsinki","Stockholm","Copenhagen","Oslo","Reykjavik"],null,["Helsinki","Stockholm","Copenhagen","Oslo","Reykjavik"],{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]}],"limits":{"lat":[55.7,64.1],"lng":[-21.9,24.9]}},"evals":[],"jsHooks":[]}</script>
 ---
 class: img-left-full
 
@@ -1189,7 +1189,7 @@ class: inverse, center, middle
 Let's trash a map with pies!
 
 &lt;div class="right-text-header"&gt;
-  &lt;p&gt;..because why not?! Every ecologist loves pie-charts-&lt;/p&gt;
+  &lt;p&gt;..because why not?! Every ecologist loves pie-charts!&lt;/p&gt;
 &lt;/div&gt;
 
 
@@ -1199,6 +1199,7 @@ class: compact
 
 ```r
 # Packages required for the example
+# Install veganUtils from https://github.com/MikkoVihtakari/veganUtils
 
 library(tidyverse)
 library(reshape2)

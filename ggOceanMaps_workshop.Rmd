@@ -86,7 +86,7 @@ class: split-33 compact
 
 .column[.content[
 
-```{r, echo = FALSE, fig.width=10, fig.height=10}
+```{r, echo = FALSE, fig.width=10, fig.height=10, dpi = 300}
 basemap(limits = 60)
 ```
 
@@ -240,7 +240,7 @@ layout: false
 
 .indigo[**A projected coordinate system <br> (polar stereographic = meters from the North Pole)**]
   
-```{r, echo = FALSE, fig.height=4.5}
+```{r, echo = FALSE, fig.height=4.5, dpi = 300}
 ggplot() + 
   expand_limits(x = c(-2e6, 2e6), y = c(-2e6, 2e6)) +
   labs(y = "Latitude (meters from the pole)", x = "Longitude (meters from the pole)") +
@@ -256,7 +256,7 @@ ggplot() +
 
 .indigo[**Non-projected angular coordinate system <br> (decimal degrees = a position on the surface of a 3D sphere)**]
 
-```{r, echo = FALSE, fig.height=4.5}
+```{r, echo = FALSE, fig.height=4.5, dpi = 300}
 ggplot() + 
   ggspatial::geom_spatial_point(data = data.frame(lon = c(0, 90, 180, -90), lat = c(60, 60, 60, 60)), aes(x = lon, y = lat), crs = 4326, color = NA) +
   scale_x_continuous("Longitude (decimal degrees)", breaks = seq(0, 360, 30)) +
@@ -280,7 +280,7 @@ The decimal degree coordinates of Nordic capitals are Helsinki (60.2 $^\circ$N, 
 
 .column[.content[
 
-```{r, fig.height = 4.5, fig.align="center"}
+```{r, fig.height = 4.5, fig.width = 10, fig.align="center", dpi = 300}
 dt <- data.frame(
   name = c("Helsinki", "Stockholm", "Copenhagen", "Oslo", 
            "Reykjavik"), 
@@ -384,7 +384,7 @@ dt <- data.frame(
 install.packages("rnaturalearthdata")
 ```
 
-```{r, fig.height = 4, fig.width = 10, fig.align="center"}
+```{r, fig.height = 4, fig.width = 10, fig.align="center", dpi = 300}
 ggplot() +
   geom_path(data = rnaturalearthdata::coastline50, 
     aes(x = long, y = lat, group = group)) +
@@ -497,7 +497,7 @@ class: img-left-full compact
 
 - .indigo[**single integer**] in decimal degrees makes a polar map
 
-```{r, fig.height=10, fig.width=10}
+```{r, fig.height=10, fig.width=10, dpi = 300}
 basemap(limits = 60)
 ```
 
@@ -510,14 +510,14 @@ count: false
 .gray[
 - **single integer** in decimal degrees makes a polar map
 
-```{r, eval = FALSE}
+```{r, eval = FALSE, dpi = 300}
 basemap(limits = 60)
 ```
 ]
 
 - .indigo[**numeric vector of length 4**] makes a square map
 
-```{r, fig.height=10, fig.width=10}
+```{r, fig.height=10, fig.width=10, dpi = 300}
 basemap(limits = c(-20, 20, 55, 80))
 ```
 
@@ -543,7 +543,7 @@ basemap(limits = c(-20, 20, 55, 80))
 
 - .indigo[**numeric vector of length 4**] in projected coordinates requires specifying the .red[**shapefiles**] argument (or supplying .red[data])
 
-```{r, fig.height=10, fig.width=10}
+```{r, fig.height=10, fig.width=10, dpi = 300}
 basemap(limits = c(-2e6, 2e6, -2e6, 2e6),
         shapefiles = "Arctic")
 ```
@@ -575,7 +575,7 @@ Use the ggOceanMaps website (https://mikkovihtakari.github.io/ggOceanMaps/) to s
 ---
 class: img-left-full
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, dpi = 300}
 basemap(-60, bathymetry = TRUE, glaciers = TRUE)
 ```
 
@@ -619,7 +619,7 @@ class: compact
 
 - Supply a data.frame to automatically limit the map to the data
 
-```{r, fig.height=5, fig.width=10}
+```{r, fig.height=5, fig.width=10, dpi = 300}
 basemap(data = dt)
 ```
 
@@ -669,7 +669,7 @@ geom_point(`data = transform_coord(dt)`,
            )
 ```
 
-```{r echo = FALSE, fig.height=5, fig.width=10}
+```{r echo = FALSE, fig.height=5, fig.width=10, dpi = 300}
 basemap(data = dt, bathymetry = TRUE, legends = FALSE, lat.interval = 2, base_size = 16) +
   geom_spatial_point(data = dt, aes(x = lon, y = lat, color = name), size = 5)
 ```
@@ -687,7 +687,7 @@ class: compact
 ]
 
 .pull-right[
-```{r fig.height=5, fig.width=10}
+```{r fig.height=5, fig.width=10, dpi = 300}
 basemap(limits = c(-21.9, 10.8, 55.7, 64.1), 
         rotate = TRUE) +
   geom_spatial_point(data = dt, 
@@ -724,7 +724,7 @@ class: compact
 - The `qmap()` function is meant as a quick way to check positions of data
 - Non-mapped variables need to be escaped using the `I()` similarly to `qplot()`
 
-```{r, fig.height=5, fig.width=10}
+```{r, fig.height=5, fig.width=10, dpi = 300}
 qmap(dt, color = name, size = I(5))
 ```
 
@@ -734,7 +734,7 @@ qmap(dt, color = name, size = I(5))
 
 .pull-right[
 
-```{r, fig.height=5, fig.width=10}
+```{r, fig.height=5, fig.width=10, dpi = 300}
 qmap(dt, color = I("red"), size = I(5))
 ```
 
@@ -750,7 +750,7 @@ class: split-two
 - Setting the .red[**data path**] is advised. See [here](https://github.com/MikkoVihtakari/ggOceanMaps#data-path).
 - More shapefiles will be added and existing ones improved
 
-```{r cache=TRUE, fig.height=4}
+```{r cache=TRUE, fig.height=4, fig.width=9, dpi = 300}
 basemap(limits = c(10.9, 12.65, 78.83, 79.12), 
         bathymetry = TRUE, shapefiles = "Svalbard",
         legends = FALSE)
@@ -758,7 +758,7 @@ basemap(limits = c(10.9, 12.65, 78.83, 79.12),
 ]]
 
 .column[.content[
-```{r cache=TRUE, fig.height = 7}
+```{r cache=TRUE, fig.height = 7, fig.width=8, dpi = 300}
 basemap(shapefiles = "Svalbard", 
         bathymetry = TRUE, legends = FALSE)
 
@@ -770,7 +770,7 @@ class: split-33 tinycode
 
 .column.inverse[.vmiddle.content[
 Usage:
-```{r, fig.height=4, cache = TRUE}
+```{r, fig.height=4, cache = TRUE, dpi = 300}
 basemap(shapefiles = "Decimal")
 ```
 ]]
@@ -963,7 +963,7 @@ rgeos::gIsValid(bs_glacier)
 ---
 class: img-left-full
 
-```{r, cache=TRUE, echo = FALSE}
+```{r, cache=TRUE, echo = FALSE, dpi = 300}
 x <- load_map_data(shapefile_list("Barents"))
 
 sp::plot(x$barentssea_bathy, col = "blue")
@@ -982,7 +982,7 @@ sp::plot(bs_glacier, col = "green", add = TRUE)
 ---
 class: img-left-full compact
 
-```{r cache = TRUE, echo = FALSE}
+```{r cache = TRUE, echo = FALSE, dpi = 300}
 basemap(shapefiles = "Barents", bathymetry = TRUE, glaciers = TRUE)
 ```
 
@@ -997,7 +997,7 @@ basemap(
 ---
 class: img-left-full
 
-```{r cache = TRUE, echo = FALSE, fig.retina=TRUE}
+```{r cache = TRUE, echo = FALSE, dpi = 300}
 p <- basemap(limits = map.limits, shapefiles = "Barents", bathymetry = TRUE, glaciers = TRUE, legends = FALSE)
 print(p)
 ```
@@ -1046,7 +1046,7 @@ cur <- do.call(rbind, tp)
 ---
 class: img-left-full compact
 
-```{r echo = FALSE, fig.retina=TRUE}
+```{r echo = FALSE, dpi = 300}
 p + geom_path(
       data = cur, 
       aes(x = long, y = lat, group = group, color = type, 
@@ -1157,7 +1157,7 @@ class: inverse, center, middle
 Let's trash a map with pies!
 
 <div class="right-text-header">
-  <p>..because why not?! Every ecologist loves pie-charts-</p>
+  <p>..because why not?! Every ecologist loves pie-charts!</p>
 </div>
 
 
@@ -1166,6 +1166,7 @@ class: compact
 
 ```{r}
 # Packages required for the example
+# Install veganUtils from https://github.com/MikkoVihtakari/veganUtils
 
 library(tidyverse)
 library(reshape2)
@@ -1255,7 +1256,7 @@ projLimits <- auto_limits(y, expand.factor = 2)$projLimits # for legend position
 class: split-33
 
 .column[.content[
-```{r echo = FALSE, fig.height= 10, fig.width = 6}
+```{r echo = FALSE, fig.height= 10, fig.width = 6, dpi = 300}
 # Plot it all
 basemap(limits = auto_limits(y, expand.factor = 2)$projLimits, 
         shapefiles = "Arctic", bathymetry = TRUE, 
