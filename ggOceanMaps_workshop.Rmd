@@ -664,7 +664,7 @@ geom_spatial_point(data = dt, #<<
                        color = name)
                    ) 
 # OR
-geom_point(`data = transform_coord(dt)`, 
+geom_point(`data = transform_coord(dt, bind = TRUE)`, 
            aes(x = lon, y = lat, color = name)
            )
 ```
