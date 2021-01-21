@@ -534,7 +534,7 @@ count: false
 basemap(limits = 60)
 ```
 
-- **numeric vector of length 4** in decimal degrees makes a square map
+- **numeric vector of length 4** makes a square map
 
 ```{r, eval = FALSE}
 basemap(limits = c(-20, 20, 55, 80))
@@ -556,6 +556,7 @@ class: img-caption
 The numeric limits vector is defined in the order 1) min/start longitude, 2) max/end longitude, 3) min latitude, 4) max latitude. The meaning depends on the projection.
 
 ---
+class: inverse
 
 # Exercise
 
@@ -566,9 +567,9 @@ Use the ggOceanMaps website (https://mikkovihtakari.github.io/ggOceanMaps/) to s
 2) Add glaciers and bathymetry to the map
 
 .gray[
-3) Plot the capitals in previous examples using ggOceanMaps and the `data` argument to limit the map. Add bathymetry, remove bathymetry legend and change the latitude grid interval to 2 degrees.
+3) Plot the capitals in previous examples using ggOceanMaps and the data argument to limit the map. Add bathymetry, remove bathymetry legend and change the latitude grid interval to 2 degrees.
 
-4) Make the same plot using the `qmap()` function.
+4) Make the same plot using the qmap() function.
 ]
 
 ---
@@ -591,6 +592,7 @@ basemap(-60, bathymetry = TRUE, glaciers = TRUE)
 The bathymetry .red[legend can be removed] using the `legends` argument.  
 
 ---
+class: inverse
 
 # Exercise
 
@@ -602,10 +604,10 @@ Use the ggOceanMaps website (https://mikkovihtakari.github.io/ggOceanMaps/) to s
 2) Add glaciers and bathymetry to the map
 ]
 
-3) Plot the capitals in previous examples using ggOceanMaps and the `data` argument to limit the map. Add bathymetry, remove bathymetry legend and change the latitude grid interval to 2 degrees.
+3) Plot the capitals in previous examples using ggOceanMaps and the data argument to limit the map. Add bathymetry, remove bathymetry legend and change the latitude grid interval to 2 degrees.
 
 .gray[
-4) Make the same plot using the `qmap()` function.
+4) Make the same plot using the qmap() function.
 ]
 
 ---
@@ -650,12 +652,16 @@ Data can be added as ggplot layers, but:
 - Data coordinates have to be in the same projection than the `basemap()`
   - Use the [`transform_coord()`](https://mikkovihtakari.github.io/ggOceanMaps/reference/transform_coord.html) function OR
   - The [ggspatial](https://CRAN.R-project.org/package=ggspatial) package
+]
+
+.pull-right[
 
 ```{r eval = FALSE}
 basemap(data = dt, bathymetry = TRUE,
         legends = FALSE, lat.interval = 2) +
 geom_spatial_point(data = dt, #<<
-                   aes(x = lon, y = lat, color = name)
+                   aes(x = lon, y = lat,
+                       color = name)
                    ) 
 # OR
 geom_point(`data = transform_coord(dt)`, 
@@ -663,9 +669,6 @@ geom_point(`data = transform_coord(dt)`,
            )
 ```
 
-]
-
-.pull-right[
 ```{r echo = FALSE, fig.height=5, fig.width=10}
 basemap(data = dt, bathymetry = TRUE, legends = FALSE, lat.interval = 2, base_size = 16) +
   geom_spatial_point(data = dt, aes(x = lon, y = lat, color = name), size = 5)
@@ -695,6 +698,7 @@ basemap(limits = c(-21.9, 10.8, 55.7, 64.1),
 ]
 
 ---
+class: inverse
 
 # Exercise
 
@@ -705,10 +709,10 @@ Use the ggOceanMaps website (https://mikkovihtakari.github.io/ggOceanMaps/) to s
 
 2) Add glaciers and bathymetry to the map
 
-3) Plot the capitals in previous examples using ggOceanMaps and the `data` argument to limit the map. Add bathymetry, remove bathymetry legend and change the latitude grid interval to 2 degrees.
+3) Plot the capitals in previous examples using ggOceanMaps and the data argument to limit the map. Add bathymetry, remove bathymetry legend and change the latitude grid interval to 2 degrees.
 ]
 
-4) Make the same plot using the `qmap()` function.
+4) Make the same plot using the qmap() function.
 
 ---
 class: compact
@@ -976,7 +980,7 @@ sp::plot(bs_glacier, col = "green", add = TRUE)
 ```
 
 ---
-class: img-left-full
+class: img-left-full compact
 
 ```{r cache = TRUE, echo = FALSE}
 basemap(shapefiles = "Barents", bathymetry = TRUE, glaciers = TRUE)
@@ -985,14 +989,15 @@ basemap(shapefiles = "Barents", bathymetry = TRUE, glaciers = TRUE)
 Or using the ggOceanMaps
 
 ```{r eval = FALSE}
-basemap(shapefiles = list(land = bs_land, glacier = bs_glacier, bathy = bs_bathy), 
-        bathymetry = TRUE, glaciers = TRUE)
+basemap(
+  shapefiles = list(land = bs_land, glacier = bs_glacier, bathy = bs_bathy), 
+  bathymetry = TRUE, glaciers = TRUE)
 ```
 
 ---
 class: img-left-full
 
-```{r cache = TRUE, echo = FALSE}
+```{r cache = TRUE, echo = FALSE, fig.retina=TRUE}
 p <- basemap(limits = map.limits, shapefiles = "Barents", bathymetry = TRUE, glaciers = TRUE, legends = FALSE)
 print(p)
 ```
@@ -1023,7 +1028,8 @@ cur <- read.csv(path)
 cur <- transform_coord(cur, proj.out = projection, bind = TRUE)
 
 ## Plot the limits (required for the xspline function)
-lims <- auto_limits(expand.grid(data.frame(lon = bound.limits[1:2], lat = bound.limits[3:4])), proj.out = projection)$projBound
+lims <- auto_limits(expand.grid(data.frame(lon = bound.limits[1:2], lat = bound.limits[3:4])), 
+                    proj.out = projection)$projBound
 sp::plot(lims)
 
 ## Run xspline through the nodes
@@ -1040,18 +1046,23 @@ cur <- do.call(rbind, tp)
 ---
 class: img-left-full compact
 
-```{r echo = FALSE}
-p + geom_path(data = cur, 
-              aes(x = long, y = lat, group = group, color = type, size = size),
-              arrow = arrow(type = "open", angle = 15, ends = "last", length = unit(0.3, "lines"))
-              ) + 
-  scale_color_manual(name = "Current\ntype", 
-                     values = c("Arctic" = "blue", "Atlantic" = "red"), 
-                     guide = guide_legend(order = 2, override.aes = list(fill = NA))
-                     ) +
-  scale_size(name = "Current\nsize", range = c(LS(0.5), LS(3)), breaks = 1:5, 
-             labels = c("Intermittent", "Minor", "Medium", "Major", "Main"), 
-             guide = guide_legend(order = 3, override.aes = list(fill = NA))
+```{r echo = FALSE, fig.retina=TRUE}
+p + geom_path(
+      data = cur, 
+      aes(x = long, y = lat, group = group, color = type, 
+          size = size),
+      arrow = arrow(type = "open", angle = 15, 
+                    ends = "last", length = unit(0.3, "lines"))
+  ) + 
+  scale_color_manual(
+    name = "Current\ntype", 
+    values = c("Arctic" = "blue", "Atlantic" = "red"), 
+    guide = guide_legend(order = 2, override.aes = list(fill = NA))
+  ) +
+  scale_size(
+    name = "Current\nsize", range = c(LS(0.5), LS(3)), breaks = 1:5, 
+    labels = c("Intermittent", "Minor", "Medium", "Major", "Main"), 
+    guide = guide_legend(order = 3, override.aes = list(fill = NA))
   )
 ```
 
@@ -1059,16 +1070,25 @@ Add the currents to the map
 
 ```{r eval = FALSE}
 p + geom_path(data = cur, 
-              aes(x = long, y = lat, group = group, color = type, size = size),
-              arrow = arrow(type = "open", angle = 15, ends = "last", length = unit(0.3, "lines"))
-              ) + 
-  scale_color_manual(name = "Current\ntype", 
-                     values = c("Arctic" = "blue", "Atlantic" = "red"), 
-                     guide = guide_legend(order = 2, override.aes = list(fill = NA))
-                     ) +
-  scale_size(name = "Current\nsize", range = c(LS(0.5), LS(3)), breaks = 1:5, 
-             labels = c("Intermittent", "Minor", "Medium", "Major", "Main"), 
-             guide = guide_legend(order = 3, override.aes = list(fill = NA))
+      aes(x = long, y = lat, group = group, color = type, 
+          size = size),
+      arrow = arrow(type = "open", angle = 15, 
+                    ends = "last", 
+                    length = unit(0.3, "lines"))
+  ) + 
+  scale_color_manual(
+    name = "Current\ntype", 
+    values = c("Arctic" = "blue", "Atlantic" = "red"), 
+    guide = guide_legend(order = 2,
+            override.aes = list(fill = NA))
+  ) +
+  scale_size(
+    name = "Current\nsize", range = c(LS(0.5), LS(3)), 
+    breaks = 1:5, labels = c("Intermittent", "Minor",
+                          "Medium", "Major", "Main"), 
+    guide = guide_legend(order = 3, 
+                         override.aes = list(fill = NA)
+                         )
   )
 ```
 
@@ -1128,9 +1148,157 @@ class: img-left-full
 .center[And many, many, others. See [here](https://geocompr.robinlovelace.net/adv-map.html), [here](https://eriqande.github.io/rep-res-web/lectures/making-maps-with-R.html), or Google.]
 
 ---
+class: inverse, center, middle
+
 # Still time?
 
-Trash the map with pies!
+--
+
+Let's trash a map with pies!
+
+<div class="right-text-header">
+  <p>..because why not?! Every ecologist loves pie-charts-</p>
+</div>
+
+
+---
+class: compact
+
+```{r}
+# Packages required for the example
+
+library(tidyverse)
+library(reshape2)
+library(ggimage)
+library(gtable)
+library(veganUtils) # to italize species names
+library(ggtext) # to plot markdown syntax 
+
+# Read the data from GitHub
+
+load(url("https://github.com/MikkoVihtakari/PlotSvalbard/raw/master/data/zooplankton.rda"))
+```
+
+---
+class: compact
+
+```{r}
+# Make a function that creates pie-charts.
+# Inspiration from https://guangchuangyu.github.io/2017/07/pie-version-of-bubble-plot/
+
+plot_pie <- function(k) {
+  ggplot(data = k, aes(x=1, y = value, fill = variable)) +
+    geom_bar(stat="identity", width=1) +
+    coord_polar(theta="y") +
+    labs(x = NULL, y = NULL, fill = "Species") + 
+    theme_void(base_size = 8) +
+    theme(
+      legend.position = "none",
+      plot.margin = unit(c(-0.5,0,-0.5,-0.5),"line"),
+      plot.title = element_text(size = 8, vjust = 0, face="bold")
+    )
+}
+```
+
+---
+class: compact
+
+```{r}
+# Melt the data to long format
+
+x <- reshape2::melt(zooplankton[!names(zooplankton) %in% "Total"], id = 1:3)
+
+# Add position factor
+x$position <- factor(as.integer(factor(paste(x$Longitude, x$Latitude))))
+
+# A data.frame list for pies
+dat <- split(x, x$position, drop = TRUE)
+
+# A tibble to store the pies
+y <- unique(x[c("position", "Longitude", "Latitude")])
+y <- y[order(y$position),]
+row.names(y) <- 1:nrow(y)
+y <- transform_coord(y, bind = TRUE)
+y <- as_tibble(y)
+
+# Generate the pies
+y$pie <- lapply(dat, plot_pie)
+```
+
+---
+class: compact
+
+```{r}
+# Generate a legend
+
+leg <- gtable::gtable_filter(
+  ggplot_gtable(
+    ggplot_build(
+      plot_pie(dat[[1]]) + 
+        theme_bw() + 
+        scale_fill_discrete(
+          breaks = levels(x$variable),
+          labels = veganUtils::italicize_taxa(levels(x$variable))
+        ) +
+        theme(legend.position="right", 
+              legend.text = ggtext::element_markdown(size = 8), 
+              legend.title = element_text(size = 10),
+              legend.background = element_rect(fill = NA, colour = NA)
+        )
+    )
+  ), "guide-box")
+
+projLimits <- auto_limits(y, expand.factor = 2)$projLimits # for legend positioning
+```
+
+---
+class: split-33
+
+.column[.content[
+```{r echo = FALSE, fig.height= 10, fig.width = 6}
+# Plot it all
+basemap(limits = auto_limits(y, expand.factor = 2)$projLimits, 
+        shapefiles = "Arctic", bathymetry = TRUE, 
+        bathy.style = "poly_greys", legends = FALSE) + # the basemap
+  annotation_custom(grob = leg,
+                    xmin = projLimits[1] + diff(projLimits[1:2])*0.2, 
+                    xmax = projLimits[1] + diff(projLimits[1:2])*0.3,
+                    ymin = projLimits[4] - diff(projLimits[3:4]*0.1), 
+                    ymax = projLimits[4] - diff(projLimits[3:4]*0.25)
+                    ) + # the legend
+  ggimage::geom_subview(subview = y$pie, 
+                        x = y$lon.proj, 
+                        y = y$lat.proj, 
+                        width = diff(projLimits[1:2])*0.1, 
+                        height = diff(projLimits[1:2])*0.1) + # the pies
+  ggtitle("Pies, oh dear...") # everybody loves them.
+```
+
+]]
+
+.column[.content[
+```{r eval = FALSE}
+# Plot it all
+basemap(limits = auto_limits(y, expand.factor = 2)$projLimits, 
+        shapefiles = "Arctic", bathymetry = TRUE, 
+        bathy.style = "poly_greys", legends = FALSE) + # the basemap
+  annotation_custom(grob = leg,
+                    xmin = projLimits[1] + diff(projLimits[1:2])*0.2, 
+                    xmax = projLimits[1] + diff(projLimits[1:2])*0.3,
+                    ymin = projLimits[4] - diff(projLimits[3:4]*0.1), 
+                    ymax = projLimits[4] - diff(projLimits[3:4]*0.25)
+                    ) + # the legend
+  ggimage::geom_subview(subview = y$pie, 
+                        x = y$lon.proj, 
+                        y = y$lat.proj, 
+                        width = diff(projLimits[1:2])*0.1, 
+                        height = diff(projLimits[1:2])*0.1) + # the pies
+  ggtitle("Pies, oh dear...") # everybody loves them.
+```
+
+]]
+
+
 
 ---
 class: inverse
@@ -1154,7 +1322,14 @@ background-image: url(Figures/backcover.png)
 background-size: cover
 
 # And thanks to you!
-[.black[mikkovihtakari.github.io/ggOceanMaps/]](https://mikkovihtakari.github.io/ggOceanMaps/) <br>
-[.small[.black[The presentation source code]]](https://github.com/AeN-R-Workshop/4-ggOceanMaps)
+[.black[mikkovihtakari.github.io/ggOceanMaps/]](https://mikkovihtakari.github.io/ggOceanMaps/) <br> <br> <br> <br>
 
-.my-footer[]
+.logo-footer[]
+
+<div class="left-text-footer">
+  <p>Examples run with ggOceanMaps v`r packageVersion("ggOceanMaps")`</p>
+</div>
+
+<div class="middle-text-footer" onclick="location.href='https://github.com/AeN-R-Workshop/4-ggOceanMaps';" style="cursor:pointer;">
+  <p>.deep-purple[**Presentation source code**]</p>
+</div>

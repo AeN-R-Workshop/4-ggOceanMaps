@@ -64,8 +64,8 @@ content: "";
     background-image: url(https://www.r-project.org/logo/Rlogo.png);
 }
 
-.my-footer {
-content: "dada";
+.logo-footer {
+content: "";
     position: absolute;
     bottom: 15px;
     right:   8px;
@@ -75,6 +75,36 @@ content: "dada";
     background-size: contain;
     background-image: url("../Figures/logo.png");
 }
+
+.left-text-footer {
+  position: fixed;
+  left: 10px;
+  bottom: 0;
+  width: 15%;
+  text-align: left;
+  font-size: 18px;
+}
+
+.middle-text-footer {
+  position: fixed;
+  left: 40%;
+  bottom: 0;
+  width: 20%;
+  text-align: center;
+  font-size: 24px;
+}
+
+.right-text-header {
+  position: fixed;
+  right: 50px;
+  top: 10%;
+  width: 15%;
+  text-align: center;
+  font-size: 24px;
+  color: white;
+}
+
+
 
 a, a > code {
   color: #1b5fff; /*default: rgb(249, 38, 114); || sets color of links */
